@@ -2,4 +2,6 @@
 
 ## Authors
 
-- [Jeremy Mark Tubongbanua](github.com/JeremyTubongbanua)
+Group 6
+
+- [Jeremy Mark Tubongbanua](github.com/JeremyTubongbanua) - 100849092
