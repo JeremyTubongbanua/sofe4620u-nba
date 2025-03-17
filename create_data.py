@@ -185,20 +185,24 @@ dataframes.to_csv('data/mapped_data.csv', index=False)
 print('Created mapped_data.csv')
 print(f'{dataframes.head()}')
 
-# ----- Created mapped_expanded -----
+# ---- Create mapped_expanded data ----
 
 df_copy = dataframes.copy()
 
+rows = []
 for i in range(len(df_copy)):
     away_players = df_copy.iloc[i]['away_players']
-    home_players = df_copy.iloc[i]['home_players']    
-    random_index = random.randint(0, 4)
-    player_removed = home_players.pop(random_index)
-    df_copy.at[i, 'home_players'] = home_players
-    df_copy.at[i, 'player_removed'] = int(player_removed)
+    home_players = df_copy.iloc[i]['home_players']
+    for j in range(0, 5, 1):
+        player_removed = home_players[j]
+        home_players_copy = home_players.copy()
+        home_players_copy.pop(j)
+        rows.append({'game': df_copy.iloc[i]['game'], 'season': df_copy.iloc[i]['season'], 'home_team': df_copy.iloc[i]['home_team'], 'away_team': df_copy.iloc[i]['away_team'], 'starting_min': df_copy.iloc[i]['starting_min'], 'outcome': df_copy.iloc[i]['outcome'], 'home_players': home_players_copy, 'away_players': away_players, 'player_removed': player_removed})
+    if i % 100000 == 0:
+        print(f'Processed row {i}/{len(df_copy)}')
 
-df_copy['player_removed'] = df_copy['player_removed'].astype(int)
+expanded_df = pd.DataFrame(rows)
 
-df_copy.to_csv("data/mapped_expanded.csv", index=False)
-print('Created mapped_expanded.csv')
-print(df_copy.head())
+expanded_df.to_csv("data/mapped_expanded.csv", index=False)
+print(f'Created mapped_expanded.csv ({len(expanded_df)} rows)')
+print(expanded_df.head())

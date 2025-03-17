@@ -112,17 +112,17 @@ for row in range(len(df_new)):
                     f.write(name + "\n")
             away_player_idx = names.index(name)
             away_players.append(away_player_idx)
-    
+
     away_players_list.append(away_players)
 
 df_new['home_players'] = home_players_list
 df_new['away_players'] = away_players_list
-    
+
 # remove home_0 to home_4, away_0 to away_4
 df_new = df_new.drop(columns=["home_0", "home_1", "home_2", "home_3", "home_4", "away_0", "away_1", "away_2", "away_3", "away_4"])
 
 print(df_new.head())
-    
+
 # use the model in ./basketball_player_prediction_model.pt
 
 # ---- Define the GNN Model ----
