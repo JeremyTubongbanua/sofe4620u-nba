@@ -216,7 +216,6 @@ model = PlayerPredictionModel(num_games, num_seasons, num_teams, num_players).to
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-# Debug - check the first batch
 for batch_idx, (features, targets) in enumerate(train_loader):
     print("Sample batch shapes:")
     print(f"Game: {features['game'].shape}")
@@ -229,9 +228,8 @@ for batch_idx, (features, targets) in enumerate(train_loader):
     print(f"Starting min: {features['starting_min'].shape}")
     print(f"Targets: {targets.shape}")
     
-    # Test the forward pass on a single sample
     for k, v in features.items():
-        features[k] = v[0:1].to(device)  # Take just one sample
+        features[k] = v[0:1].to(device)
     
     targets = targets[0:1].to(device)
     
@@ -241,7 +239,7 @@ for batch_idx, (features, targets) in enumerate(train_loader):
     except Exception as e:
         print(f"Forward pass failed: {str(e)}")
     
-    break  # Just one batch is enough for debugging
+    break
 
 for epoch in range(EPOCHS):
     model.train()
