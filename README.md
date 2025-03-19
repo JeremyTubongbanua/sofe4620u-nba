@@ -44,6 +44,10 @@ Below is the project structure of the repository:
   - `names.txt`: contains all possible basketball player names
   - `seasons.txt`: contains season names
   - `teams.txt`: contains team names
+  - `matchups-20*.csv`: training data
+  - `NBA_test*.csv`: testing data
+  - `mapped_data.csv`: preprocessed indexed data containing aggregated team players
+  - `mapped_expanded.csv`: added player_removed column to mapped_data.csv
 - `data.zip`: A compressed file of the `data/` directory. Primarily used for data fetching from the cloud.
 - `NBA 5th Player Prediction Report.pdf`: The final report of the project.
 - `NBA 5th Player Prediction Slides.pdf`: The final presentation slides of the project.
