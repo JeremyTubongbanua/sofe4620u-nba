@@ -12,6 +12,8 @@ Group 6
 
 ## Project Objectives
 
+Predict the 5th player to optimize the home team's chances of winning the game.
+
 ## Project Structure
 
 Below is the project structure of the repository:
@@ -28,6 +30,8 @@ Below is the project structure of the repository:
 │   ├── mapped_data.csv
 │   └── mapped_expanded.csv
 ├── data.zip
+├── NBA 5th Player Prediction Report.pdf
+├── NBA 5th Player Prediction Slides.pdf
 ├── basketball_player_removal_mlp_model_3.pt
 ├── create_data.py
 ├── MLP_Training.py
@@ -41,6 +45,8 @@ Below is the project structure of the repository:
   - `seasons.txt`: contains season names
   - `teams.txt`: contains team names
 - `data.zip`: A compressed file of the `data/` directory. Primarily used for data fetching from the cloud.
+- `NBA 5th Player Prediction Report.pdf`: The final report of the project.
+- `NBA 5th Player Prediction Slides.pdf`: The final presentation slides of the project.
 - `basketball_player_removal_mlp_model_3.pt`: The trained model for predicting the best basketball player to remove from a team. This is our 3rd and final iteration.
 - `create_data.py`: A Python script that preprocesses the matchups data and NBA_test.csv and generates the `.txt`, `mapped_data.csv`, and `mapped_expanded.csv` files.
 - `MLP_Training.ipynb`: A Jupyter Notebook that trains the MLP model for predicting the best basketball player to remove from a team.
