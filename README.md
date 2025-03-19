@@ -100,6 +100,98 @@ Created mapped_expanded.csv (1184560 rows)
 4  9610       8         29         10             0       -1   [88, 241, 256, 476]  [51, 307, 396, 617, 958]             897
 ```
 
+## Training Sample
+
+Below is the model design and an example of the training sample:
+
+```python
+class BasketballModelMLP(nn.Module):
+    def __init__(self, embedding_dim, hidden_dim):
+        super(BasketballModelMLP, self).__init__()
+
+        self.player_embedding = nn.Embedding(len(names), embedding_dim)
+        self.season_embedding = nn.Embedding(len(seasons), embedding_dim)
+        self.team_embedding = nn.Embedding(len(teams), embedding_dim)
+
+        self.home_players_fc = nn.Linear(embedding_dim * 4, hidden_dim)
+        self.away_players_fc = nn.Linear(embedding_dim * 5, hidden_dim)
+        self.teams_fc = nn.Linear(embedding_dim * 2, hidden_dim)
+        self.context_fc = nn.Linear(embedding_dim + 1, hidden_dim)
+
+        self.combined_fc1 = nn.Linear(hidden_dim * 4, hidden_dim * 2)
+        self.combined_fc2 = nn.Linear(hidden_dim * 2, hidden_dim)
+        self.output_fc = nn.Linear(hidden_dim, len(names))
+
+        self.dropout = nn.Dropout(0.25)
+
+    def forward(self, season_idx, home_team_idx, away_team_idx, starting_min, home_players, away_players):
+        batch_size = season_idx.size(0)
+
+        season_idx = season_idx.long()
+        home_team_idx = home_team_idx.long()
+        away_team_idx = away_team_idx.long()
+        home_players = home_players.long()
+        away_players = away_players.long()
+
+        # 1. Embeddings
+        season_emb = self.season_embedding(season_idx)
+        home_team_emb = self.team_embedding(home_team_idx)
+        away_team_emb = self.team_embedding(away_team_idx)
+
+        home_player_embeddings = self.player_embedding(home_players)
+        home_player_embeddings = home_player_embeddings.view(batch_size, -1)
+
+        away_player_embeddings = self.player_embedding(away_players)
+        away_player_embeddings = away_player_embeddings.view(batch_size, -1)
+
+        # 2. Features
+        home_player_features = F.relu(self.home_players_fc(home_player_embeddings))
+        away_player_features = F.relu(self.away_players_fc(away_player_embeddings))
+
+        context_features = torch.cat([
+            season_emb,
+            starting_min.unsqueeze(1)
+        ], dim=1)
+        context_features = F.relu(self.context_fc(context_features))
+
+        teams_features = torch.cat([
+            home_team_emb,
+            away_team_emb
+        ], dim=1)
+        teams_features = F.relu(self.teams_fc(teams_features))
+
+        # 3. Combined Features
+        combined_features = torch.cat([
+            context_features,
+            teams_features,
+            home_player_features,
+            away_player_features
+        ], dim=1)
+
+        combined_features = F.relu(self.combined_fc1(combined_features))
+        combined_features = self.dropout(combined_features)
+        combined_features = F.relu(self.combined_fc2(combined_features))
+        combined_features = self.dropout(combined_features)
+
+        logits = self.output_fc(combined_features)
+
+        return logits
+```
+
+```sh
+No existing model found. Starting with a new model.
+Epoch 1/5: 100%|██████████| 11022/11022 [03:25<00:00, 53.69it/s]
+Epoch 1/5, Train Loss: 3.1532, Test Loss: 2.3173, Accuracy: 30.55%
+Epoch 2/5: 100%|██████████| 11022/11022 [03:24<00:00, 53.80it/s]
+Epoch 2/5, Train Loss: 2.4804, Test Loss: 2.0959, Accuracy: 35.20%
+Epoch 3/5: 100%|██████████| 11022/11022 [03:40<00:00, 50.03it/s]
+Epoch 3/5, Train Loss: 2.3306, Test Loss: 1.9866, Accuracy: 37.88%
+Epoch 4/5: 100%|██████████| 11022/11022 [03:39<00:00, 50.32it/s]
+Epoch 4/5, Train Loss: 2.2573, Test Loss: 1.9356, Accuracy: 38.89%
+Epoch 5/5: 100%|██████████| 11022/11022 [03:46<00:00, 48.57it/s]
+Epoch 5/5, Train Loss: 2.2065, Test Loss: 1.8995, Accuracy: 39.70%
+```
+
 ## Overview of Results
 
 Running NBA_Testing.ipynb will output the following results. It will also output nba_test_results.csv, which contains the results of the predictions.
